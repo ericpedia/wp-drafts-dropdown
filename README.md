@@ -1,8 +1,8 @@
-# Alt Drafts Dropdown Wordpress Plugin
+# Alt Drafts Dropdown
 
 ## Description
 
-Wordpress admin toolbar addition forked from crowdfavorite's WP Drafts Dropdown (https://github.com/crowdfavorite/wp-drafts-dropdown)
+Wordpress admin toolbar addition forked from crowdfavorite's very useful WP Drafts Dropdown plugin (https://github.com/crowdfavorite/wp-drafts-dropdown)
 
 ## Changes
 
