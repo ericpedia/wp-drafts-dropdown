@@ -29,13 +29,10 @@ Author URI: http://crowdfavorite.com
 
 load_plugin_textdomain('drafts-dropdown');
 
-function cfdd_get_drafts() {	
-	$args = array(
-	  'public' => true,
-	);
-	$post_types = get_post_types($args, 'names');
+function cfdd_get_drafts( $post_type ) {	
+
 	$query = array( 
-		'post_type' => $post_types, 
+		'post_type' => $post_type, 
 		'post_status' => 'draft',
 		'posts_per_page' => 100,
 		'order' => 'DESC',
@@ -46,11 +43,28 @@ function cfdd_get_drafts() {
 	return $drafts->posts;
 }
 
-function cfdd_drafts_content() {
+function cfdd_get_post_types() {
+
+	$args = array(
+	  'public' => true,
+	);
+	return get_post_types($args, 'names');
+}
+
+function cfdd_draft_list_for_post_type( $post_type ){
+
+	$drafts = cfdd_get_drafts( $post_type );
+
+	$post_type_object = get_post_type_object( $post_type );
+	$post_type_name = $post_type_object->labels->name;
+	$post_type_edit_url = admin_url( "edit.php?post_type={$post_type}" );
+	$post_type_new_url = admin_url( "post-new.php?post_type={$post_type}" );
+
 	$output = '';
-	$drafts = cfdd_get_drafts();
+
 	if (count($drafts)) {
 		$output .= '<ul id="cfdd_drafts">';
+		$output .= '<li><h3>'.$post_type_name.'</h3></li>';
 		foreach ($drafts as $draft) {
 			$post_title = !empty($draft->post_title) ? esc_html($draft->post_title) : __('(untitled)', 'drafts-dropdown');
 			$output .= '<li><a href="'.esc_url(admin_url('post.php?action=edit&post='.$draft->ID)).'">'.$post_title.'</a></li>';
@@ -58,9 +72,24 @@ function cfdd_drafts_content() {
 		$output .= '</ul>';
 	}
 	else {
-		$output .= '<p>'.__('(none)', 'drafts-dropdown').'</p>';
+		// $output .= '<p>'.__('(none)', 'drafts-dropdown').'</p>';
 	}
 	return $output;
+}
+
+function cfdd_draft_list_full() {
+
+	$post_types = cfdd_get_post_types();
+	$output = '';
+
+	foreach ( $post_types as $post_type ) {
+		$output .= cfdd_draft_list_for_post_type( $post_type );
+	}
+	return $output;
+}
+
+function cfdd_drafts_content() {
+	return cfdd_draft_list_full();
 }
 
 function cfdd_ajax_drafts_list() {
